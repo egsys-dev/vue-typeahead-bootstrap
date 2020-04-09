@@ -121,7 +121,6 @@ export default {
       const re = new RegExp(this.showAllResults ? '' : this.escapedQuery, 'gi')
       let finalData = []
       // Filter, sort, and concat
-      console.log(this.ignoreNativeFilter)
       if (this.ignoreNativeFilter) {
         finalData = this.data
       } else {

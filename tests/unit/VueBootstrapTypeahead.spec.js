@@ -57,7 +57,7 @@ describe('VueBootstrapTypeahead', () => {
 
   it('Hides the list when blurred', () => {
     let child = wrapper.find(VueBootstrapTypeaheadList)
-    wrapper.setData({inputValue: 'Can'})
+    wrapper.setData({ inputValue: 'Can' })
     wrapper.find('input').trigger('focus')
     expect(child.isVisible()).toBe(true)
     wrapper.find('input').trigger('blur')
