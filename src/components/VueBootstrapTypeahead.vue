@@ -1,7 +1,11 @@
 <template>
   <div>
     <div :class="sizeClasses">
-      <div ref="prependDiv" v-if="$slots.prepend || prepend" class="input-group-prepend">
+      <div
+        ref="prependDiv"
+        v-if="$slots.prepend || prepend"
+        class="input-group-prepend"
+      >
         <slot name="prepend">
           <span class="input-group-text">{{ prepend }}</span>
         </slot>
@@ -37,6 +41,7 @@
       :background-variant="backgroundVariant"
       :text-variant="textVariant"
       :maxMatches="maxMatches"
+      :ignore-native-filter="ignoreNativeFilter"
       :minMatchingChars="minMatchingChars"
       :disableSort="disableSort"
       :showOnFocus="showOnFocus"
@@ -45,7 +50,11 @@
       @listItemBlur="handleChildBlur"
     >
       <!-- pass down all scoped slots -->
-      <template v-for="(slot, slotName) in $scopedSlots" :slot="slotName" slot-scope="{ data, htmlText }">
+      <template
+        v-for="(slot, slotName) in $scopedSlots"
+        :slot="slotName"
+        slot-scope="{ data, htmlText }"
+      >
         <slot :name="slotName" v-bind="{ data, htmlText }"></slot>
       </template>
       <!-- below is the right solution, however if the user does not provide a scoped slot, vue will still set $scopedSlots.suggestion to a blank scope
@@ -71,7 +80,7 @@ export default {
     size: {
       type: String,
       default: null,
-      validator: size => ['lg', 'sm'].indexOf(size) > -1
+      validator: (size) => ['lg', 'sm'].indexOf(size) > -1
     },
     value: {
       type: String
@@ -79,12 +88,12 @@ export default {
     data: {
       type: Array,
       required: true,
-      validator: d => d instanceof Array
+      validator: (d) => d instanceof Array
     },
     serializer: {
       type: Function,
       default: (d) => d,
-      validator: d => d instanceof Function
+      validator: (d) => d instanceof Function
     },
     backgroundVariant: String,
     textVariant: String,
@@ -114,7 +123,11 @@ export default {
     },
     placeholder: String,
     prepend: String,
-    append: String
+    append: String,
+    ignoreNativeFilter: {
+      type: Boolean,
+      default: false
+    }
   },
 
   computed: {
@@ -203,7 +216,7 @@ export default {
   },
 
   mounted() {
-    this.$_ro = new ResizeObserver(e => {
+    this.$_ro = new ResizeObserver((e) => {
       this.resizeList(this.$refs.input)
     })
     this.$_ro.observe(this.$refs.input)
@@ -223,12 +236,12 @@ export default {
 </script>
 
 <style scoped>
-  .vbt-autcomplete-list {
-    padding-top: 5px;
-    position: absolute;
-    max-height: 350px;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
-    overflow-y: auto;
-    z-index: 999;
-  }
+.vbt-autcomplete-list {
+  padding-top: 5px;
+  position: absolute;
+  max-height: 350px;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+  overflow-y: auto;
+  z-index: 999;
+}
 </style>

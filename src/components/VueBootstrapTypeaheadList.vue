@@ -1,7 +1,8 @@
 <template>
   <div class="list-group shadow" ref="suggestionList">
     <vue-bootstrap-typeahead-list-item
-      v-for="(item, id) in matchedItems" :key="id"
+      v-for="(item, id) in matchedItems"
+      :key="id"
       :active="isListItemActive(id)"
       :data="item.data"
       :html-text="highlight(item.text)"
@@ -10,7 +11,11 @@
       @click.native="handleHit(item, $event)"
       v-on="$listeners"
     >
-      <template v-if="$scopedSlots.suggestion" slot="suggestion" slot-scope="{ data, htmlText }">
+      <template
+        v-if="$scopedSlots.suggestion"
+        slot="suggestion"
+        slot-scope="{ data, htmlText }"
+      >
         <slot name="suggestion" v-bind="{ data, htmlText }" />
       </template>
     </vue-bootstrap-typeahead-list-item>
@@ -39,7 +44,7 @@ export default {
     data: {
       type: Array,
       required: true,
-      validator: d => d instanceof Array
+      validator: (d) => d instanceof Array
     },
     query: {
       type: String,
@@ -69,6 +74,10 @@ export default {
     showAllResults: {
       type: Boolean,
       default: false
+    },
+    ignoreNativeFilter: {
+      type: Boolean,
+      default: false
     }
   },
 
@@ -86,7 +95,7 @@ export default {
 
   computed: {
     highlight() {
-      return text => {
+      return (text) => {
         text = sanitize(text)
         if (this.query.length === 0) {
           return text
@@ -102,25 +111,39 @@ export default {
     },
 
     matchedItems() {
-      if (!this.showOnFocus && (this.query.length === 0 || this.query.length < this.minMatchingChars)) {
+      if (
+        !this.showOnFocus &&
+        (this.query.length === 0 || this.query.length < this.minMatchingChars)
+      ) {
         return []
       }
 
       const re = new RegExp(this.showAllResults ? '' : this.escapedQuery, 'gi')
-
+      let finalData = []
       // Filter, sort, and concat
-      return this.data
-        .filter(i => i.text.match(re) !== null)
-        .sort((a, b) => {
-          if (this.disableSort) return 0
+      console.log(this.ignoreNativeFilter)
+      if (this.ignoreNativeFilter) {
+        finalData = this.data
+      } else {
+        finalData = this.data
+          .filter((i) => i.text.match(re) !== null)
+          .sort((a, b) => {
+            if (this.disableSort) return 0
 
-          const aIndex = a.text.indexOf(a.text.match(re)[0])
-          const bIndex = b.text.indexOf(b.text.match(re)[0])
+            const aIndex = a.text.indexOf(a.text.match(re)[0])
+            const bIndex = b.text.indexOf(b.text.match(re)[0])
 
-          if (aIndex < bIndex) { return -1 }
-          if (aIndex > bIndex) { return 1 }
-          return 0
-        }).slice(0, this.maxMatches)
+            if (aIndex < bIndex) {
+              return -1
+            }
+            if (aIndex > bIndex) {
+              return 1
+            }
+            return 0
+          })
+      }
+
+      return finalData.slice(0, this.maxMatches)
     }
   },
 

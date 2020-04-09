@@ -6,7 +6,8 @@
     <vue-bootstrap-typeahead
       :data="countries"
       v-model="cntrySearch"
-      :serializer="s => s.name"
+      :serializer="(s) => s.name"
+      :ignore-native-filter="true"
       placeholder="Canada, United States, etc..."
       @hit="handleHit"
     >
@@ -55,9 +56,6 @@ export default {
     this.countries = await res.json()
   }
 }
-
 </script>
 
-<style>
-
-</style>
+<style></style>
